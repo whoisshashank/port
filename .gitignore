@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Temporarily skip large videos
+/works/cube.mp4
+/works/excerpt touch.mp4
+/works/manthanfullcut.mov
+/works/manthanskrillexcut.mov
+/works/Shashank-Srivastava-sh4k.mp4
+/works/TDMovieOut.1.mov
+/works/Untitled9.mp4
