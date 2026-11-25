@@ -49,7 +49,7 @@
     .project-list { border-top: 1px solid var(--line); }
     .project {
       display: grid;
-      grid-template-columns: 1.05fr .95fr;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
       min-height: 520px;
       border-bottom: 1px solid var(--line);
     }
@@ -57,11 +57,23 @@
     .project:nth-child(even) .project-copy { order: 1; }
     .project-visual {
       position: relative;
+      min-width: 0;
       min-height: 520px;
       overflow: hidden;
       display: grid;
       place-items: center;
       background: #e1ddd3;
+    }
+    .project-visual--media { background: #171814; }
+    .project-visual video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #171814;
+      transform: scale(var(--scroll-scale, 1));
+      transform-origin: center;
+      will-change: transform;
     }
     .project:nth-child(1) .project-visual { background: linear-gradient(145deg, #172920 0%, #314d3e 62%, #a9a28c 62%, #a9a28c 100%); }
     .project:nth-child(2) .project-visual { background: linear-gradient(135deg, #242726 0%, #242726 48%, #e34d32 48%, #f0b39d 100%); }
@@ -130,7 +142,7 @@
       .availability { display: none; }
       .intro { grid-template-columns: 1fr; gap: 20px; }
       .intro p:last-child { justify-self: start; }
-      .project { grid-template-columns: 1fr; }
+      .project { grid-template-columns: minmax(0, 1fr); }
       .project:nth-child(even) .project-visual, .project:nth-child(even) .project-copy,
       .project:nth-child(odd) .project-visual, .project:nth-child(odd) .project-copy { order: initial; }
       .project:nth-child(even) .project-copy, .project:nth-child(odd) .project-copy { border: 0; border-bottom: 1px solid var(--line); }
@@ -174,8 +186,8 @@
 
     <section class="project-list" aria-label="Engineering projects">
       <article class="project">
-        <div class="project-visual" aria-hidden="true">
-          <div class="visual-mark"></div>
+        <div class="project-visual project-visual--media" aria-hidden="true">
+          <video src="proj%20gifs/lunar%20gif.mp4" autoplay muted loop playsinline preload="metadata"></video>
           <span class="visual-label">Lunar mapping / CesiumJS</span>
         </div>
         <div class="project-copy">
@@ -222,8 +234,8 @@
       </article>
 
       <article class="project">
-        <div class="project-visual" aria-hidden="true">
-          <div class="visual-mark"></div>
+        <div class="project-visual project-visual--media" aria-hidden="true">
+          <video src="proj%20gifs/motion%20canvas%20gif.mp4" autoplay muted loop playsinline preload="metadata"></video>
           <span class="visual-label">Pose tracking / Motion art</span>
         </div>
         <div class="project-copy">
@@ -303,5 +315,35 @@
     <span>© 2026 Shashank Srivastava</span>
     <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to top ↑</a>
   </footer>
+  <script>
+    const projectVideos = document.querySelectorAll(".project-visual--media video");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let zoomUpdatePending = false;
+
+    function updateProjectVideoZoom() {
+      const viewportCenter = window.innerHeight / 2;
+      const maxDistance = Math.max(viewportCenter, 1);
+
+      projectVideos.forEach((video) => {
+        const bounds = video.getBoundingClientRect();
+        const videoCenter = bounds.top + bounds.height / 2;
+        const edgeProgress = Math.min(Math.abs(videoCenter - viewportCenter) / maxDistance, 1);
+        const scale = 1 + (reducedMotion.matches ? 0 : edgeProgress * 0.35);
+        video.style.setProperty("--scroll-scale", scale.toFixed(3));
+      });
+
+      zoomUpdatePending = false;
+    }
+
+    function scheduleProjectVideoZoom() {
+      if (zoomUpdatePending) return;
+      zoomUpdatePending = true;
+      requestAnimationFrame(updateProjectVideoZoom);
+    }
+
+    window.addEventListener("scroll", scheduleProjectVideoZoom, { passive: true });
+    window.addEventListener("resize", scheduleProjectVideoZoom);
+    scheduleProjectVideoZoom();
+  </script>
 </body>
 </html>
