@@ -165,7 +165,7 @@
     <nav class="nav" aria-label="Main navigation">
       <a href="#about">About</a>
       <a href="index.html">Engineering projects</a>
-      <a class="active" href="video.html" aria-current="page">Visual work</a>
+      <a class="active" href="video.html" aria-current="page">Gallery</a>
       <a href="index.html#contact">Contact / Links</a>
       <a class="availability" href="mailto:omnishashank@gmail.com">Available for projects</a>
     </nav>
@@ -248,10 +248,11 @@
       { file: "TDMovieOut.0.mov", title: "TD Movie Out 0" },
       { file: "Video-89781.mp4", title: "Video 89781" },
       { file: "Untitled7.gif", title: "Untitled 7" },
-      { file: "Untitled9.mp4", title: "Untitled 9" }
+      { file: "Untitled9.mp4", title: "Untitled 9" },
+      { file: "style transfer gif.mov", title: "Style Transfer", folder: "proj gifs", preview: true, pinned: true }
     ];
 
-    function createWorkCard({ src, poster, title }) {
+    function createWorkCard({ src, poster, title, preview }) {
       const work = document.createElement("article");
       work.className = "work";
       work.dataset.category = "video";
@@ -263,7 +264,17 @@
 
       const frame = document.createElement("div");
       frame.className = "work-image";
-      if (poster) {
+      if (preview) {
+        const video = document.createElement("video");
+        video.src = src;
+        video.muted = true;
+        video.loop = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.preload = "metadata";
+        video.setAttribute("aria-hidden", "true");
+        frame.append(video);
+      } else if (poster) {
         const image = document.createElement("img");
         image.src = poster;
         image.alt = "";
@@ -284,11 +295,18 @@
     savedWorks.forEach((item) => {
       const filename = encodeURIComponent(item.file);
       const posterFilename = encodeURIComponent(item.file.replace(/\.[^.]+$/, ".jpg"));
-      gallery.append(createWorkCard({
-        src: `works/${filename}`,
-        poster: `works/posters/${posterFilename}`,
-        title: item.title
-      }));
+      const sourceFolder = item.folder ? `${encodeURIComponent(item.folder)}/` : "works/";
+      const workCard = createWorkCard({
+        src: `${sourceFolder}${filename}`,
+        poster: item.preview ? "" : `works/posters/${posterFilename}`,
+        title: item.title,
+        preview: item.preview
+      });
+      if (item.pinned) {
+        gallery.prepend(workCard);
+      } else {
+        gallery.append(workCard);
+      }
     });
     gallery.querySelector(".empty-state")?.remove();
     const featuredVideo = document.querySelector("#featured-video");
