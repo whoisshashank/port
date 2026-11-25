@@ -36,6 +36,7 @@
     .wordmark span { color: var(--red); }
     .nav { display: flex; gap: 34px; align-items: center; font-size: 13px; }
     .nav a { transition: color .2s ease; }
+    .nav .active { border-bottom: 1px solid var(--red); padding-bottom: 5px; }
     .nav a:hover, .availability:hover { color: var(--red); }
     .availability { display: inline-flex; gap: 9px; align-items: center; font: 11px var(--mono); text-transform: uppercase; transition: color .2s ease; }
     .availability::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #6c9b68; }
@@ -105,11 +106,13 @@
     .empty-state { grid-column: 1 / -1; padding: 58px 0; color: var(--muted); text-align: center; font: italic 22px var(--serif); }
     @keyframes appear { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-    @media (max-width: 800px) {
-      .shell { width: min(100% - 44px, 620px); }
-      .topbar { height: 64px; }
+    @media (max-width: 900px) {
+      .topbar.shell { width: calc(100% - 44px); }
       .nav { gap: 18px; }
       .availability { display: none; }
+    }
+    @media (max-width: 800px) {
+      .shell { width: min(100% - 44px, 620px); }
       .intro { grid-template-columns: 1fr; gap: 22px; padding: 54px 0 38px; }
       .intro-aside { justify-self: start; }
       .feature { grid-template-columns: 1fr; }
@@ -124,9 +127,11 @@
       .work:nth-child(3n + 2) { margin-top: 24px; }
       .about { gap: 35px; }
     }
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
       .shell { width: calc(100% - 36px); }
-      .nav { gap: 14px; font-size: 12px; }
+      .topbar.shell { width: calc(100% - 36px); }
+      .topbar { height: 64px; }
+      .nav { gap: 13px; font-size: 12px; }
       .nav a:nth-child(2) { display: none; }
       .intro { padding-top: 44px; }
       h1 { font-size: clamp(50px, 15vw, 72px); }
@@ -156,10 +161,12 @@
 </head>
 <body>
   <header class="shell topbar">
+    <a class="wordmark" href="index.html">Shashank<span>.</span></a>
     <nav class="nav" aria-label="Main navigation">
       <a href="#about">About</a>
       <a href="index.html">Engineering projects</a>
-      <a href="https://www.instagram.com/shaeshenk/" target="_blank" rel="noreferrer">@shaeshenk</a>
+      <a class="active" href="video.html" aria-current="page">Visual work</a>
+      <a href="index.html#contact">Contact / Links</a>
       <a class="availability" href="mailto:omnishashank@gmail.com">Available for projects</a>
     </nav>
   </header>
