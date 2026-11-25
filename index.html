@@ -318,6 +318,8 @@
   <script>
     const projectVideos = document.querySelectorAll(".project-visual--media video");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const zoomRange = 0.6;
+    const zoomSensitivity = 0.65;
     let zoomUpdatePending = false;
 
     function updateProjectVideoZoom() {
@@ -328,7 +330,7 @@
         const bounds = video.getBoundingClientRect();
         const videoCenter = bounds.top + bounds.height / 2;
         const edgeProgress = Math.min(Math.abs(videoCenter - viewportCenter) / maxDistance, 1);
-        const scale = 1 + (reducedMotion.matches ? 0 : edgeProgress * 0.35);
+        const scale = 1 + (reducedMotion.matches ? 0 : zoomRange * Math.pow(edgeProgress, zoomSensitivity));
         video.style.setProperty("--scroll-scale", scale.toFixed(3));
       });
 
